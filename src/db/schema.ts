@@ -2,6 +2,7 @@
 import { float} from "drizzle-orm/mysql-core";
 import {
     pgTable,
+    pgEnum,
     varchar,
     serial,
     text,
@@ -11,6 +12,7 @@ import {
     real,
 } from "drizzle-orm/pg-core";
 
+export const statusEnum = pgEnum('status', ['failed', 'done', 'pending']);
 
 export const users = pgTable("users", {
     id: uuid("id").primaryKey(),
@@ -56,6 +58,33 @@ export const order = pgTable("order", {
     total_price: real("total_price").notNull(),
     user_id: uuid("user_id").references(() => users.id)
 });
+
+export const payment = pgTable("payment", {
+    id: uuid("id").primaryKey(),
+    payment_amount: integer("payment_amount").notNull(),
+    status: statusEnum("status").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(), 
+    order_id: uuid("order_id").references(() => order.id),
+    user_id: uuid("user_id").references(() => users.id)
+});
+
+export const cart = pgTable("cart", {
+    id: uuid("id").primaryKey(),
+    user_id: uuid("user_id").references(() => users.id),
+    product_id: uuid("product_id").references(() => product.id),
+    quantity: integer("quantity").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+export const reviews = pgTable("reviews", {
+    id: uuid("id").primaryKey(),
+    product_id: uuid("product_id").references(() => product.id),
+    user_id: uuid("user_id").references(() => users.id),
+    rating: integer("rating").notNull(),
+    comment: text("comment"),
+    createdAt: timestamp("created_at").notNull().defaultNow()
+
+})
 
 export type InsertUser = typeof users.$inferInsert;
 export type SelectUser = typeof users.$inferSelect;
