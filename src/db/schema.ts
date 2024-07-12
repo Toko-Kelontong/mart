@@ -13,10 +13,10 @@ import {
 export const statusEnum = pgEnum("status", ["Failed!", "Success!", "Pending!"]);
 
 export const users = pgTable("users", {
-    id: uuid("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     username: varchar("username", { length: 255 }).notNull().unique(),
     name: varchar("name", { length: 255 }).notNull(),
-    password: varchar("password", { length: 32 }).notNull(),
+    password: varchar("password", { length: 64 }).notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
     email: text("email").notNull().unique(),
@@ -57,7 +57,7 @@ export const category = pgTable("category", {
 });
 
 export const order = pgTable("order", {
-    id: uuid("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     order_date: timestamp("order_at").notNull().defaultNow(),
     total_price: real("total_price").notNull(),
     user_id: uuid("user_id").references(() => users.id, {
@@ -67,7 +67,7 @@ export const order = pgTable("order", {
 });
 
 export const payment = pgTable("payment", {
-    id: uuid("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     payment_amount: integer("payment_amount").notNull(),
     status: statusEnum("status").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -82,7 +82,7 @@ export const payment = pgTable("payment", {
 });
 
 export const cart = pgTable("cart", {
-    id: uuid("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     quantity: integer("quantity").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     user_id: uuid("user_id").references(() => users.id, {
@@ -96,7 +96,7 @@ export const cart = pgTable("cart", {
 });
 
 export const reviews = pgTable("reviews", {
-    id: uuid("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     rating: integer("rating").notNull(),
     comment: text("comment"),
     product_id: serial("product_id").references(() => product.id, {
